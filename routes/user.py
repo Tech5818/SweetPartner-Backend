@@ -9,6 +9,12 @@ async def create_user():
   await new_user.create()
   return new_user
 
+@user_router.post("/login")
+async def login():
+  return {
+    "message": "success"
+  }
+
 @user_router.get("/get")
 async def get_user():
   user = await User.find_one(User.name == "vvv")
