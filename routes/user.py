@@ -1,5 +1,6 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Body, Request, Header, Depends, HTTPException
 from models.user import User
+from .auth.libs import get_jwt_strategy
 
 user_router = APIRouter(tags=["User"])
 
@@ -9,8 +10,23 @@ async def create_user():
   await new_user.create()
   return new_user
 
+def get_token(authorization: str = Header(...)):
+  if not authorization:
+    raise HTTPException(status_code=401, detail="Authorization Header가 없습니다.")
+  if "bearer" not in authorization.lower():
+    raise HTTPException(status_code=401, detail="Authorization 타입이 Berer이 아닙니다.")
+  return authorization.split(" ")[1]
+
+@user_router.get("/verify")
+async def verify_user(token: str = Depends(get_token)):
+  jwt_strategy = get_jwt_strategy()
+
+  return "hello"
+
+
 @user_router.post("/login")
-async def login():
+async def login(body = Body(...)):
+
   return {
     "message": "success"
   }
