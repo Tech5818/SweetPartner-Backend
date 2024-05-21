@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Body, Request, Header, Depends, HTTPException
 from models.user import User
+from models.oauth.google import GoogleOAuthUser
 from .auth.libs import get_jwt_strategy
+from .auth.google import google_oauth_client
+from jwt import decode
 
 user_router = APIRouter(tags=["User"])
 
@@ -17,10 +20,15 @@ def get_token(authorization: str = Header(...)):
     raise HTTPException(status_code=401, detail="Authorization 타입이 Berer이 아닙니다.")
   return authorization.split(" ")[1]
 
+from bson import ObjectId
 @user_router.get("/verify")
 async def verify_user(token: str = Depends(get_token)):
-  jwt_strategy = get_jwt_strategy()
-
+  
+  payload = decode(token, "SECRET", algorithms="HS256", audience="AAA")
+  user_id = ObjectId(payload.get("sub"))
+  user = await GoogleOAuthUser.find_one({"_id": user_id})
+  print(user.email)
+  print(type(user))
   return "hello"
 
 
