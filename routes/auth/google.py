@@ -19,6 +19,5 @@ google_oauth_router = get_oauth_router(
   get_user_manager=get_user_manager,
   backend=auth_backend,
   state_secret=SECRET,
-  redirect_url="http://localhost:8000/auth/google/callback",
-  # associate_by_email=True
+  redirect_url="http://localhost:8000/callback",
 )
